@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck Builder</title>
+</head>
+<body>
+    <p id="deck-id"> {{ deck.id }} </p>
+    <h1>Construct {{ deck.deck_name }} </h1>
+    <h3>{{ deck.invest_name }}</h3>
+    <ul class="list-group" id="packs">
+        {% for card in cards %}
+            <li class="list-group-item">
+                <p class="card-name">{{ card.name }}</p>
+                <form id="{{ card.code }}">
+                    {% for x in range(card.deck_limit + 1) %}
+                        <input type="radio" class="deck-qty" value="{{ x }}" name="{{ card.name }}">
+                        <label for="{{ x }}">{{ x }}</label>
+                    {% endfor %}
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+    <form action="/users/{{ g.user.id }}" id="pack-form">
+        <button>submit deck</button>
+    </form>
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    <script src="/static/cards.js"></script>
+</body>
+</html>
