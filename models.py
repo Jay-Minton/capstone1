@@ -22,6 +22,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
 
     collection = db.relationship("User_Pack", backref="user")
+    decks = db.relationship("Deck", backref="user")
 
     @classmethod
     def register(cls, username, pwd, email):
@@ -64,6 +65,7 @@ class Deck(db.Model):
     deck_name = db.Column(db.Text, nullable=False)
     faction_name = db.Column(db.Text, nullable=False)
     invest_name = db.Column(db.Text, nullable=False)
+    invest_id = db.Column(db.Text, nullable=False)
     size = db.Column(db.Integer, nullable=False, default=30)
 
     cards = db.relationship("Deck_Card", backref="deck")

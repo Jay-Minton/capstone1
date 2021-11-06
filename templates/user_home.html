@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ user.username }} Home
+{% endblock %}
+
+{% block content %}
+<h1>{{ user.username }}</h1>
+<h2>Decks List</h2>
+
+<ul>
+    {% for deck in user.decks %}
+        <li><a href="/decks/{{ deck.id }}">{{ deck.deck_name }}</a></li>
+    {% endfor %}
+</ul>
+
+<a href="/decks/setup">Start making a new deck</a>
+{% endblock %}

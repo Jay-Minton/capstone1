@@ -12,11 +12,17 @@
         {% for pack in packs %}
             <li class="list-group-item">
                 <p>{{ pack.name }}</p>
-                <form method="POST" action="/collection/{{ pack.code }}/{{ pack.name }}/add" id="pack-form">
-                    <button>add</button>
+                <form id="{{ pack.code }}" name="{{ pack.name }}">
+                    <input type="button" value="add">
                 </form>
             </li>
         {% endfor %}
     </ul>
+    <form action="/users/{{ g.user.id }}">
+        <button>Finished adding</button>
+    </form>
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    <script src="/static/packs.js"></script>
 </body>
 </html>

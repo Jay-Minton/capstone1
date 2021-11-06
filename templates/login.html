@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Arkham Deck Builder
+{% endblock %}
+
+{% block content %}
+<h1>Login to the Arkham Deck Builder</h1>
+
+<form method="POST">
+
+{{ form.hidden_tag() }}
+
+{% for field in form if field.widget.input_type != "hidden" %}
+
+<p>
+    {{ field.label }}
+    {{ field }}
+
+    {% for error in field.errors %}
+    <span>{{ error }}</span>
+    {% endfor %}
+</p>
+{% endfor %}
+
+<button type="submit">Login</button>
+
+</form>
+<p>Haven't set up an account yet?<a href="/register">  CLICK HERE!</a></p>
+
+{% endblock %}

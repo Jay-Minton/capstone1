@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ card.name }} 
+{% endblock %}
+
+{% block content %}
+<h1>{{ card.name }}</h1>
+{% for key in card.deck_options %}
+    {% for key2 in key %}
+        <p><b>{{ key2 }}</b></p>
+        {% if key2 == "faction"%}
+            {% for key3 in key[key2] %}
+                <p>{{ key3 }}</p>
+            {% endfor %}
+        {% endif %}
+            
+    {% endfor %}
+{% endfor %}
+
+<img src="https://arkhamdb.com{{ card.imagesrc }}">
+    
+<a href="/decks/{{ deck.id }}">Back to decklist</a>
+{% endblock %}
