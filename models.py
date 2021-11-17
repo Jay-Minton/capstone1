@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from sqlalchemy import func
 
 db = SQLAlchemy()
 
@@ -69,6 +70,11 @@ class Deck(db.Model):
     size = db.Column(db.Integer, nullable=False, default=30)
 
     cards = db.relationship("Deck_Card", backref="deck")
+
+    @classmethod
+    def count(cls, deck_id):
+        total = db.session.query(func.sum(Deck_Card.qty)).group_by(Deck_Card.deck_id).having(Deck_Card.deck_id == deck_id).scalar()
+        return total
 
 class Deck_Card(db.Model):
     __tablename__ = "decks_cards"

@@ -191,7 +191,6 @@ def deck_setup():
         deck = Deck(
             user_id = g.user.id,
             deck_name = form.deck_name.data,
-            #faction name should be no longer neccesary
             faction_name = investigator["faction_name"],
             invest_id = investigator["code"],
             invest_name = form.invest_name.data
@@ -222,21 +221,21 @@ def deck_build(deck_id):
     for code in coll:
         resp = requests.get(f'{base_url}/cards/{code}')
         cards = cards + resp.json()
-
+    # Deck building currently excludes neutral cards, investigator signiture cards, weaknesses, investegators with optional secondary classes and trait specific deck requirments 
+    # Deck size is also set to 30 automatically.  
+    # These functions will be added or ammended in future versions.
     for option in investigator["deck_options"]:
         for faction in option:
             if faction == "faction":
                 for faction2 in option[faction]:
-                    factions.append(faction2)
+                    if faction2 != "neutral":
+                        factions.append(faction2)
 
-    #resp.append(requests.get(f'{base_url}/cards/{coll[1]}'))
-    #cards
-    #sorted_packs = sorted(packs, key=sort_packs)
     for card in cards:
-        if card["faction_code"] in factions and "subtype_code" not in card:
-            if "spoiler" not in card and "restrictions" not in card and "bonded_to" not in card:
-                if card["deck_limit"] != 0 and card["type_code"] != "investigator" and card["xp"] == 0:
-                    sorted_cards.append(card)
+        if card["faction_code"] in factions and card["deck_limit"] != 0:
+                if card["type_code"] != "investigator":
+                    if card["xp"] == 0:
+                        sorted_cards.append(card)
 
     return render_template("deck_build.html", cards=sorted_cards, deck=deck)
 
@@ -247,9 +246,9 @@ def add_to_deck(deck_id):
 
     data = request.json
     deck = Deck.query.get_or_404(deck_id)
-    #coll = [p.pack_id for p in g.user.collection]
+    
     card_ids = [c.card_id for c in deck.cards]
-    #console.log(f"******************{data['int_deck_id']}")
+    
     card = Deck_Card(
         deck_id = data["int_deck_id"],
         card_id = data["card_id"],
@@ -258,7 +257,6 @@ def add_to_deck(deck_id):
     ) 
 
     if data["int_qty"] == 0:
-        #pack_out = User_Pack.query.filter(User_Pack.pack_id == pack_code, User_Pack.user_id  == g.user.id).first()
         card_out = Deck_Card.query.filter(Deck_Card.card_id == data["card_id"], Deck_Card.deck_id  == deck_id).first()
         db.session.delete(card_out)
 
@@ -271,8 +269,24 @@ def add_to_deck(deck_id):
         db.session.add(card)
 
     db.session.commit()
+    total = Deck.count(deck_id)
+    count = { 
+        "total": total,
+        "legal": "Deck Minimmum Not Met"
+    }
+    if total > deck.size:
+        count = { 
+            "total": total,
+            "legal": "Too Many Cards"
+        }
+    
+    elif total == deck.size:
+        count = { 
+        "total": total,
+        "legal": "Deck Size Okay"
+    }
 
-    return ("added", 201)
+    return (count, 201)
 
 @app.route("/decks/<int:deck_id>")
 def deck_info(deck_id):
@@ -286,68 +300,6 @@ def card_info(card_id, deck_id):
     """Show available card information"""
     deck = Deck.query.get_or_404(deck_id)
     resp = requests.get(f'{base_url}/card/{card_id}')
-    print("*****************************************************************")
-    print(base_url)
-    #print(resp.name)
-    print("*****************************************************************")
     card = resp.json()
 
     return render_template("card_info.html", card=card, deck=deck)
-
-#*****************************************************************************
-#
-# Trial routes to be delete upon completion
-#
-#*****************************************************************************
-
-#can I append resp for multiple requests.
-@app.route("/practice")
-def practice():
-    """temp practice stuff page"""
-    coll = [p.pack_id for p in g.user.collection]
-    cards = []
-    sorted_cards = []
-    deck_array = []
-    for code in coll:
-        resp = requests.get(f'{base_url}/cards/{code}')
-        cards = cards + resp.json()
-    #resp.append(requests.get(f'{base_url}/cards/{coll[1]}'))
-    #cards
-    #sorted_packs = sorted(packs, key=sort_packs)
-    for card in cards:
-        if card["faction_code"] == "seeker":
-            sorted_cards.append(card)
-
-    return render_template("practice.html", cards=sorted_cards, deck=deck_)
-
-@app.route("/practice2", methods={"GET","POST"})
-def practice2():
-    """temp practice stuff page"""
-    form = DeckForm()
-    coll = [p.pack_id for p in g.user.collection]
-    cards = []
-    sorted_cards = []
-    names = []
-    investigator = {}
-    for code in coll:
-        resp = requests.get(f'{base_url}/cards/{code}')
-        cards = cards + resp.json()
-    for card in cards:
-        if card["type_code"] == "investigator":
-            sorted_cards.append(card)
-            names.append(card["name"])
-    form.invest_name.choices = names
-    if form.validate_on_submit():
-        for card in sorted_cards:
-            if card["name"] == form.invest_name.data:
-                investigator = card
-        deck = Deck(
-            user_id = g.user.id,
-            deck_name = form.deck_name.data,
-            faction_name = investigator["faction_name"],
-            invest_name = form.invest_name.data
-        )
-        db.session.add(deck)
-        db.session.commit()
-        return redirect(f"/decks/{deck.id}/build")
-    return render_template("practice2.html", form=form, cards=sorted_cards)

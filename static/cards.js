@@ -1,6 +1,9 @@
 const BASE_URL = "http://127.0.0.1:5000";
 
 $deck = $("#deck-id");
+$total = $("#deck-total");
+$legal = $("#deck-legal");
+
 
 $("li form input").on("click", async function (evt) {
     //evt.preventDefault();
@@ -19,5 +22,6 @@ $("li form input").on("click", async function (evt) {
         int_deck_id,
         card_name
     });
-
+    $total[0].innerHTML = await addedToDeck.data["total"];
+    $legal[0].innerHTML = await addedToDeck.data["legal"];
 });
