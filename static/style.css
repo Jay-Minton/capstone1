@@ -1,0 +1,31 @@
+body {
+    background-color: blanchedalmond;
+}
+
+#nav {
+    background-color: black;
+    height: 46px;
+}
+
+#nav-title {
+    float: left;
+    color: red;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif 
+}
+
+#nav-choices {
+    float:right;
+}
+
+.nav-choice {
+    display: inline;
+}
+
+.pack-clicked {
+    background-color:black;
+    color:white;
+}
+
+#deck-id {
+    visibility: hidden;
+}

@@ -6,9 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>    {% block title %}
         {% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-
+    <div id="nav">
+        <h2 id="nav-title">Arkham LCG Deck Builder</h2>
+        <ul id="nav-choices">
+            <li class="nav-choice"><a href="/login">login</a></li>
+            <li class="nav-choice"><a href="/register">register</a></li>
+        </ul>
+    </div>
     {% block content %}
     {% endblock %}
 
