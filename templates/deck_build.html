@@ -2,7 +2,7 @@
 
 
 {% block title %}
-    Collection
+    Build Deck
 {% endblock %}
 
 {% block content %}
@@ -14,16 +14,26 @@
     <ul class="list-group" id="packs">
         {% for card in cards %}
             <li class="list-group-item">
+
                 <p class="card-name">{{ card.name }}</p>
                 <form id="{{ card.code }}">
                     {% for x in range(card.deck_limit + 1) %}
-                        <input type="radio" class="deck-qty" value="{{ x }}" name="{{ card.name }}">
-                        <label for="{{ x }}">{{ x }}</label>
+                        {% if card.code in in_deck and x == in_deck[card.code] %}
+                            <input type="radio" class="deck-qty" value="{{ x }}" name="{{ card.name }}" checked>
+                            <label for="{{ x }}">{{ x }}</label>
+                        {% else %}
+                            <input type="radio" class="deck-qty" value="{{ x }}" name="{{ card.name }}">
+                            <label for="{{ x }}">{{ x }}</label>
+                        {% endif %}
                     {% endfor %}
+                    {% if card.code in deck.cards %}
+                        <p>yes</p>
+                    {% endif %}
                 </form>
             </li>
         {% endfor %}
     </ul>
+    {{ in_deck }}
     <form action="/users/{{ g.user.id }}" id="deck-submit">
         <button>submit deck</button>
     </form>

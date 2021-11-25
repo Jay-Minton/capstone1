@@ -234,10 +234,14 @@ def deck_build(deck_id):
     for card in cards:
         if card["faction_code"] in factions and card["deck_limit"] != 0:
                 if card["type_code"] != "investigator":
-                    if card["xp"] == 0:
-                        sorted_cards.append(card)
-
-    return render_template("deck_build.html", cards=sorted_cards, deck=deck)
+                    if "xp" in card:
+                        if card["xp"] == 0:
+                            sorted_cards.append(card)
+    in_deck = {}
+    for pick in deck.cards:
+        in_deck[pick.card_id] = pick.qty
+    
+    return render_template("deck_build.html", cards=sorted_cards, deck=deck, in_deck = in_deck)
 
 
 @app.route("/decks/<int:deck_id>/add", methods=["POST"])
